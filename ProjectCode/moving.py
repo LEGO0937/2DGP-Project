@@ -23,6 +23,7 @@ character = load_image('jiwoo.png')
 running = True
 x, y = POKE_WIDTH // 2, POKE_HEIGHT // 2
 frame = 0
+real_frame = 0
 hide_cursor()
 
 while running:
@@ -30,7 +31,9 @@ while running:
     poke_ground.draw(POKE_WIDTH // 2, POKE_HEIGHT // 2)
     character.clip_draw((frame * 51) + 89, 0 * 1, 51, 59, x, y) #51씩 프레임 증가
     update_canvas()
-    frame = (frame + 1) % 3
+    real_frame += 1
+    if real_frame % 3 == 0:
+        frame = (frame + 1) % 3
 
     delay(0.02)
     handle_events()
