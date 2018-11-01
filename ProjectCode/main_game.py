@@ -17,12 +17,12 @@ class Back1:
         self.back1_x = 450      #first background, 'x' location
 
     def update(self, frame_time):
-        self.back1_x -= 10
+        self.back1_x -= 2 #원래 10
         if self.back1_x <= -450:
             self.back1_x = 1350
 
     def draw(self):
-        self.image.draw(self.back1_x,300)
+        self.image.draw(self.back1_x, 300)
 
 class Back2:
     image = None
@@ -32,7 +32,7 @@ class Back2:
         self.back2_x = 1350     #second background, 'x' location
 
     def update(self,frame_time):
-        self.back2_x -= 10
+        self.back2_x -= 2
         if self.back2_x <= -450:
             self.back2_x = 1350
 
@@ -47,11 +47,12 @@ class Weapone:
 
 class Trainer:
 
-    PIXEL_PER_METER = (13.0 / 0.3)  # 10 pixel 30 cm
+    PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
     RUN_SPEED_KMPH = 20.0  # Km / Hour
     RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
     RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
     RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
     TIME_PER_ACTION = 0.5
     ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
     FRAMES_PER_ACTION = 4
@@ -73,7 +74,7 @@ class Trainer:
         self.upon = False
         self.downon = False
         self.state = False  # enter 'a' key(image change)
-        self.attstate = False   # 트레이너 무기 state
+        #self.attstate = False   # 트레이너 무기 state
 
         self.life_time = 0.0
         self.total_frames = 0.0
@@ -96,9 +97,10 @@ class Trainer:
                 trainer.upon = True
             elif event.key == SDLK_DOWN:
                 trainer.downon = True
-            elif event.key == SDLK_a and trainer.attstate == False:
-                trainer.state = True
-                trainer.trainerattstate = True
+            #elif event.key == SDLK_a and trainer.attstate == False:
+            elif event.key == SDLK_a:
+                #trainer.state = True
+                #trainer.attstate = True
                 trainer.weap[trainer.count].state = True
                 trainer.weap[trainer.count].xx = trainer.x + 30
                 trainer.weap[trainer.count].yy = trainer.y
@@ -116,13 +118,14 @@ class Trainer:
             elif event.key == SDLK_DOWN:
                 trainer.downon = False
             elif event.key == SDLK_a:
-                trainer.state = False
-                trainer.weap[trainer.count].state = False
+                #trainer.state = False
+                #trainer.weap[trainer.count].state = False
+                sleep(0.02)
 
     def update(self, frame_time):
 
-        self.frame += int(self.total_frames) % 8
-        self.framea += int(self.total_frames) % 5
+        self.frame += int(self.total_frames) % 20
+        self.framea += int(self.total_frames) % 20
         self.life_time += frame_time
         distance = trainer.RUN_SPEED_PPS * frame_time
         self.total_frames += trainer.FRAMES_PER_ACTION * trainer.ACTION_PER_TIME * frame_time
@@ -136,30 +139,31 @@ class Trainer:
         if self.downon == True and self.y > 30:
             self.y -= (self.dir * distance)
         for i in range(20):
-            if self.attstate == True:
+            #if self.attstate == True:
                 if self.weap[i].state == True:
                     self.weap[i].xx += (self.dir * distance*1.3)
 
     def draw(self):
         if self.state == True:
-            self.trainer_attack_image.clip_draw(((self.frame % 4) * 51) + 89, 0, 80, 70, self.x, self.y) #(frame * 51) + 89
+            self.trainer_attack_image.clip_draw(((self.frame % 3) * 70), 0, 70, 70, self.x, self.y) #(frame * 51) + 89
         if self.state == False:
             #self.trainer_image.draw(self.x, self.y)
+            self.trainer_attack_image.clip_draw(((self.frame % 3) * 70), 0, 70, 70, self.x, self.y)  # (frame * 51)
             pass
         for i in range(20):
             if self.weap[i].state == True:
-                self.trainer_weapone_image.clip_draw((self.framea % 4) * 30, 0, 25, 30, self.weap[i].xx, self.weap[i].yy)
+                self.trainer_weapone_image.clip_draw((self.framea % 4) * 30, 0, 30, 30, self.weap[i].xx, self.weap[i].yy)
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
 
     def get_bb(self):
-        return self.x-35, self.y-20, self.x+25, self.y+30
+        return self.x - 35, self.y - 20, self.x + 25, self.y + 30
 
-    def draw_aa(self,i):
+    def draw_aa(self, i):
         draw_rectangle(*self.get_aa(i))
 
-    def get_aa(self,i):
+    def get_aa(self, i):
         return self.weap[i].xx-10, self.weap[i].yy-10, self.weap[i].xx-10, self.weap[i].yy+12
 
 class Monster1:
@@ -183,19 +187,21 @@ class Monster1:
         self.dir = 1.0
         self.x, self.y = random.randint(1200, 3500), random.randint(60, 570)
 
-    def update(self,frame_time):
+    def update(self, frame_time):
         self.frame += int(self.total_frames) % 2
         self.life_time += frame_time
         distance = trainer.RUN_SPEED_PPS * frame_time
         self.total_frames += trainer.FRAMES_PER_ACTION * trainer.ACTION_PER_TIME * frame_time
 
         self.x -= (self.dir * distance)
-        if self.x <=0:
+        if self.x <= 0:
             self.x = random.randint(900, 1500)
             self.y = random.randint(80, 570)
 
     def draw(self):
-        self.image.clip_draw((self.frame % 4) * 60, 0, 60, 50, self.x, self.y)
+        #self.image.clip_draw((self.frame % 3) * 56, 82, 56, 41, self.x, self.y)
+        self.image.clip_draw((self.frame % 3) * 60, 100, 60, 50, self.x, self.y)
+
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
@@ -236,15 +242,15 @@ class Monster2:
         self.total_frames += trainer.FRAMES_PER_ACTION * trainer.ACTION_PER_TIME * frame_time
 
         self.x -= (self.dir * distance)
-        if self.x <=0:
+        if self.x <= 0:
             self.x = random.randint(900, 2000)
             self.y = random.randint(80, 570)
 
     def draw(self):
         if self.state == False:
-            self.image.clip_draw((self.frame % 3) * 69, 0, 74, 100, self.x, self.y)
+            self.image.clip_draw((self.frame % 3) * 70, 0, 70, 70, self.x, self.y)
         if self.state == True:
-            self.hit_image.clip_draw((self.framea % 2)* 65, 0, 74, 100, self.x, self.y)
+            self.hit_image.clip_draw((self.framea % 2) * 70, 0, 70, 70, self.x, self.y)
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
@@ -266,12 +272,12 @@ class Boss:
     image = None
     def __init__(self):
         if Boss.image == None:
-            Boss.image = load_image('파이어.png')
+            Boss.image = load_image('fire2.png')
         self.frame = 0
         self.life_time = 0.0
         self.total_frames = 0.0
         self.dir = 0.5
-        self.x, self.y = 1200,300
+        self.x, self.y = 1200, 300
 
     def update(self,frame_time):
         self.frame += int(self.total_frames) % 7
@@ -288,7 +294,7 @@ class Boss:
 
     def draw(self):
         if score_count >= 400:
-            self.image.clip_draw((self.frame % 7) * 262, 0, 253, 550, self.x, self.y)
+            self.image.clip_draw((self.frame % 3) * 140, 0, 140, 100, self.x, self.y)
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
@@ -310,14 +316,14 @@ class Boss_monster:
     image = None
     def __init__(self):
         if Boss_monster.image == None:
-            Boss_monster.image = load_image('파이어.png')
+            Boss_monster.image = load_image('bossweapone.png')
         self.frame = random.randint(0, 5)
         self.life_time = 0.0
         self.total_frames = 0.0
         self.dir = 1.5
         self.x, self.y = random.randint(1200, 2000), random.randint(30, 590)
 
-    def update(self,frame_time):
+    def update(self, frame_time):
         self.frame += int(self.total_frames) % 2
         self.life_time += frame_time
         distance = trainer.RUN_SPEED_PPS * frame_time
@@ -327,8 +333,8 @@ class Boss_monster:
             self.x -= (self.dir * distance)
 
         if self.x <= 0:
-            self.x = random.randint(900,1500)
-            self.y = random.randint(30,590)
+            self.x = random.randint(1300, 1500)
+            self.y = random.randint(30, 590)
 
     def draw(self):
         if score_count >= 400:
@@ -342,7 +348,7 @@ class Boss_monster:
 
 class Collision_line:       
     def __init__(self):
-        self.x,self.y =900,300
+        self.x, self.y = 900, 300
         Collision_line.image = load_image('line.png')
 
     def draw(self):
@@ -393,13 +399,17 @@ def exit():
     del(boss)
 
 def collide1(a, b):                             #트레이너와, 적 collision
-    left_a, bottom_a,right_a,top_a = a.get_bb()
-    left_b, bottom_b,right_b,top_b = b.get_bb()
+    left_a, bottom_a, right_a, top_a = a.get_bb()
+    left_b, bottom_b, right_b, top_b = b.get_bb()
 
-    if left_a > right_b : return False
-    if right_a < left_b : return False
-    if top_a < bottom_b : return False
-    if bottom_a > top_b : return False
+    if left_a > right_b:
+        return False
+    if right_a < left_b:
+        return False
+    if top_a < bottom_b:
+        return False
+    if bottom_a > top_b:
+        return False
 
     return True
 
@@ -407,10 +417,14 @@ def collide2(a, b, i):                          #트레이너와, 적 collision
     left_a, bottom_a, right_a, top_a = a.get_aa(i)
     left_b, bottom_b, right_b, top_b = b.get_bb()
 
-    if left_a > right_b: return False
-    if right_a < left_b: return False
-    if top_a < bottom_b: return False
-    if bottom_a > top_b: return False
+    if left_a > right_b:
+        return False
+    if right_a < left_b:
+        return False
+    if top_a < bottom_b:
+        return False
+    if bottom_a > top_b:
+        return False
 
     return True
 
@@ -472,6 +486,7 @@ def update(frame_time):
         trainer.diecount = 100
         if clear_count >=30:
             game_framework.change_state(clear_state)
+
 
 def draw(frame_time):
     hide_cursor()
