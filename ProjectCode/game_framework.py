@@ -12,6 +12,7 @@ class GameState:
 
 class TestGameState:
 
+
     def __init__(self, name):
         self.name = name
 
@@ -73,9 +74,9 @@ def run(start_state):
     running = True
     stack = [start_state]
     start_state.enter()
-    current_time = time.clock()
+    current_time = time.time()
     while (running):
-        frame_time = time.clock() - current_time
+        frame_time = time.time() - current_time
         current_time += frame_time
         stack[-1].handle_events(frame_time)
         stack[-1].update(frame_time)

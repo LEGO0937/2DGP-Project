@@ -1,5 +1,6 @@
 from pico2d import *
 from time import sleep
+import math
 
 import random
 import game_framework
@@ -17,7 +18,7 @@ class Back1:
         self.back1_x = 450      #first background, 'x' location
 
     def update(self, frame_time):
-        self.back1_x -= 2 #원래 10
+        self.back1_x -= 2
         if self.back1_x <= -450:
             self.back1_x = 1350
 
@@ -45,6 +46,9 @@ class Weapone:
         self.yy = 0
         self.state = False
 
+#class Item:
+#    def __init__(selfs):
+
 class Trainer:
 
     PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
@@ -65,7 +69,7 @@ class Trainer:
         self.x = 50
         self.y = 300
         self.count = 0          #트레이너 weapone count
-        self.diecount = 5       #트레이너 hp
+        self.diecount = 100      #트레이너 hp
         self.weap = [Weapone() for i in range(20)]      #트레이너 weapone
         self.frame = 0    # 트레이너 frame
         self.framea = 0   # 트레이너 weapone frame
@@ -80,10 +84,13 @@ class Trainer:
         self.total_frames = 0.0
         self.dir = 1
 
+        self.god_time = 0
+        self.collide = False
+
         if Trainer.trainer_image == None:
-            Trainer.trainer_image = load_image('지우.png')
+            Trainer.trainer_image = load_image('이슬이.png')
         if Trainer.trainer_attack_image == None:
-            Trainer.trainer_attack_image = load_image('지우.png')
+            Trainer.trainer_attack_image = load_image('이슬이.png')
         if Trainer.trainer_weapone_image == None:
             Trainer.trainer_weapone_image = load_image('몬스터볼무기.png')
 
@@ -97,10 +104,7 @@ class Trainer:
                 trainer.upon = True
             elif event.key == SDLK_DOWN:
                 trainer.downon = True
-            #elif event.key == SDLK_a and trainer.attstate == False:
             elif event.key == SDLK_a:
-                #trainer.state = True
-                #trainer.attstate = True
                 trainer.weap[trainer.count].state = True
                 trainer.weap[trainer.count].xx = trainer.x + 30
                 trainer.weap[trainer.count].yy = trainer.y
@@ -118,9 +122,7 @@ class Trainer:
             elif event.key == SDLK_DOWN:
                 trainer.downon = False
             elif event.key == SDLK_a:
-                #trainer.state = False
-                #trainer.weap[trainer.count].state = False
-                sleep(0.02)
+                pass
 
     def update(self, frame_time):
 
@@ -139,17 +141,14 @@ class Trainer:
         if self.downon == True and self.y > 30:
             self.y -= (self.dir * distance)
         for i in range(20):
-            #if self.attstate == True:
                 if self.weap[i].state == True:
                     self.weap[i].xx += (self.dir * distance*1.3)
 
     def draw(self):
         if self.state == True:
-            self.trainer_attack_image.clip_draw(((self.frame % 3) * 70), 0, 70, 70, self.x, self.y) #(frame * 51) + 89
+            self.trainer_attack_image.clip_draw(((self.frame % 3) * 70), 0, 70, 70, self.x, self.y)
         if self.state == False:
-            #self.trainer_image.draw(self.x, self.y)
-            self.trainer_attack_image.clip_draw(((self.frame % 3) * 70), 0, 70, 70, self.x, self.y)  # (frame * 51)
-            pass
+            self.trainer_attack_image.clip_draw(((self.frame % 3) * 70), 0, 70, 70, self.x, self.y)
         for i in range(20):
             if self.weap[i].state == True:
                 self.trainer_weapone_image.clip_draw((self.framea % 4) * 30, 0, 30, 30, self.weap[i].xx, self.weap[i].yy)
@@ -166,9 +165,22 @@ class Trainer:
     def get_aa(self, i):
         return self.weap[i].xx-10, self.weap[i].yy-10, self.weap[i].xx-10, self.weap[i].yy+12
 
+class Assist:
+    PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
+    RUN_SPEED_KMPH = 20.0  # Km / Hour
+    RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+    RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+    RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
+    TIME_PER_ACTION = 0.5
+    ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+    FRAMES_PER_ACTION = 4
+
+
+
 class Monster1:
 
-    PIXEL_PER_METER = (30.0 / 0.3)  # 10 pixel 30 cm
+    PIXEL_PER_METER = (20.0 / 0.3)  # 10 pixel 20 cm
     RUN_SPEED_KMPH = 20.0  # Km / Hour
     RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
     RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
@@ -199,7 +211,6 @@ class Monster1:
             self.y = random.randint(80, 570)
 
     def draw(self):
-        #self.image.clip_draw((self.frame % 3) * 56, 82, 56, 41, self.x, self.y)
         self.image.clip_draw((self.frame % 3) * 60, 100, 60, 50, self.x, self.y)
 
 
@@ -226,7 +237,7 @@ class Monster2:
         if Monster2.image == None:
             Monster2.image = load_image('파이리.png')
         if Monster2.hit_image == None:
-            Monster2.hit_image = load_image('파이리.png')
+            Monster2.hit_image = load_image('몬스터볼잡을때.png')
         self.frame = random.randint(0,10)
         self.life_time = 0.0
         self.total_frames = 0.0
@@ -250,7 +261,7 @@ class Monster2:
         if self.state == False:
             self.image.clip_draw((self.frame % 3) * 70, 0, 70, 70, self.x, self.y)
         if self.state == True:
-            self.hit_image.clip_draw((self.framea % 2) * 70, 0, 70, 70, self.x, self.y)
+            self.hit_image.clip_draw((self.framea % 4) * 32, 0, 32, 49, self.x, self.y)
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
@@ -285,7 +296,7 @@ class Boss:
         distance = trainer.RUN_SPEED_PPS * frame_time
         self.total_frames += trainer.FRAMES_PER_ACTION * trainer.ACTION_PER_TIME * frame_time
 
-        if score_count >= 400:               #score over, boss appearance
+        if score_count >= 400:
             self.x -= (self.dir * distance)
 
         if self.x <= 700:
@@ -352,7 +363,7 @@ class Collision_line:
         Collision_line.image = load_image('line.png')
 
     def draw(self):
-        self.image.draw(self.x,self.y)
+        self.image.draw(self.x, self.y)
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
@@ -372,7 +383,7 @@ def handle_events(frame_time):
             trainer.handle_event(event)
 
 def enter():
-    global back1, back2, trainer, enemy1, enemy2, enemies1, enemies2, score_count, second_collision, boss, boss1, collision_line, line, boss_monster, boss2, clear_count
+    global back1, back2, trainer, live_font ,enemy1, enemy2, enemies1, time, enemies2, score_count, second_collision, boss, boss1, collision_line, line, boss_monster, boss2, clear_count, warning_font,score_font
     back1 = Back1()
     back2 = Back2()
     trainer = Trainer()
@@ -381,7 +392,7 @@ def enter():
     enemy2 = Monster2()
     enemies2 = [Monster2() for i in range(15)]  # 몬스터2
     boss = Boss()
-    boss1 = [Boss() for i in range(1)] # boss
+    boss1 = [Boss() for i in range(1)]
     boss_monster = Boss_monster()
     boss2 = [Boss_monster() for i in range(20) ]
     collision_line = Collision_line()
@@ -389,6 +400,11 @@ def enter():
     score_count = 0             #score
     clear_count = 0
     second_collision = 0        # 두방에 사라진다
+    time = get_time()
+
+    #warning_font = load_font('ENCR10B.TTF', 115)  # warning view
+    score_font = load_font('Pokemon Hollow.ttf', 25)  # score view
+    live_font = load_font('Pokemon Hollow.ttf', 25)
 
 def exit():
     global back1, back2, enemy1, enemy2, boss
@@ -484,7 +500,7 @@ def update(frame_time):
     if score_count >= 1000:
         clear_count += 1
         trainer.diecount = 100
-        if clear_count >=30:
+        if clear_count >= 30:
             game_framework.change_state(clear_state)
 
 
@@ -505,23 +521,26 @@ def draw(frame_time):
     for boss_monster in boss2:
         boss_monster.draw()
 
+    score_font.draw(700, 570, 'Score: ' + str(score_count), (0, 0, 255))
+    live_font.draw(500, 570, 'Live: ' + str(trainer.diecount), (255, 0, 0))
+
     for enemy1 in enemies1:             
         if collide1(trainer, enemy1):
-            sleep(0.02)
-            trainer.diecount -= 1   
+            #sleep(1)
+            trainer.diecount -= 1
             if trainer.diecount <= 0:
                 game_framework.change_state(game_over_state)
 
     for enemy2 in enemies2:           
         if collide1(trainer, enemy2):
-            sleep(0.01)
-            trainer.diecount -= 2   
+            #sleep(1)
+            trainer.diecount -= 1
             if trainer.diecount <= 0:
                 game_framework.change_state(game_over_state)
 
     for boss in boss1:                 
         if collide1(trainer, boss):
-            trainer.diecount -= 100
+            trainer.diecount -= 1
         if trainer.diecount <= 0:
             game_framework.change_state(game_over_state)
 

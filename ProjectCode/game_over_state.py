@@ -11,7 +11,7 @@ logo_time = 0.0
 
 def enter():
     global image
-    image = load_image('gameover.png')
+    image = load_image('게임오버.png')
 
 def exit():
     pass

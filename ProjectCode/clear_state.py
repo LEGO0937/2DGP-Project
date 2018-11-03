@@ -11,7 +11,7 @@ logo_time = 0.0
 
 def enter():
     global image
-    image = load_image('clear.png')
+    image = load_image('이김수정.png')
 
 def exit():
     pass
