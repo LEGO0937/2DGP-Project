@@ -8,6 +8,7 @@ import title_state
 import game_over_state
 import clear_state
 
+
 name = "MainState"
 
 class Back1:
@@ -432,7 +433,7 @@ class Boss_monster:
     image = None
     def __init__(self):
         if Boss_monster.image == None:
-            Boss_monster.image = load_image('bossweapone.png')
+            Boss_monster.image = load_image('이펙트.png')
         self.frame = random.randint(0, 5)
         self.life_time = 0.0
         self.total_frames = 0.0
@@ -488,7 +489,7 @@ def handle_events(frame_time):
             trainer.handle_event(event)
 
 def enter():
-    global back1, back2, trainer, live_font, item, enemy1, items, enemy2, enemies1, time, enemies2, score_count, second_collision, boss, boss1, collision_line, line, boss_monster, boss2, clear_count, warning_font,score_font
+    global back1, back2, trainer, live_font, item, item_score, enemy1, items, enemy2, enemies1, time, enemies2, score_count, second_collision, boss, boss1, collision_line, line, boss_monster, boss2, clear_count, warning_font,score_font
     back1 = Back1()
     back2 = Back2()
     trainer = Trainer()
@@ -613,14 +614,13 @@ def update(frame_time):
             game_framework.change_state(clear_state)
 
     if trainer.fire_item == True:
-        item_score = score_count
         for i in range(20):
             for enemy1 in enemies1:
                     if enemy1.x <= 800 and enemy1.x >= 0:
                         score_count += 10  # score+
                         trainer.attstate = False
                         enemies1.remove(enemy1)
-                        if score_count - item_score > 150:
+                        if score_count > 400:
                             trainer.fire_item = False
 
         for i in range(20):
@@ -630,7 +630,7 @@ def update(frame_time):
                     trainer.attstate = False
                     enemy2.state = True
                     trainer.weap[i].yy = 1000
-                    if score_count - item_score > 150:
+                    if score_count > 400:
                         trainer.fire_item = False
                     if second_collision >= 21:
                         score_count += 20  # score+
@@ -659,7 +659,7 @@ def draw(frame_time):
         item.draw()
 
     score_font.draw(700, 570, 'Score: ' + str(score_count), (0, 0, 255))
-    live_font.draw(500, 570, 'Live: ' + str(trainer.diecount), (255, 0, 0))
+    #live_font.draw(500, 570, 'Live: ' + str(trainer.diecount), (255, 0, 0))
 
     for enemy1 in enemies1:             
         if collide1(trainer, enemy1):
