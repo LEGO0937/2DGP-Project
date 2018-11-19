@@ -13,8 +13,9 @@ def enter():
     global image
     image = load_image('이김수정.png')
 
-def exit():
-    pass
+#def exit():
+#    pass
+
 
 def update(frame_time):
     global logo_time
