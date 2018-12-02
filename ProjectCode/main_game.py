@@ -1,13 +1,11 @@
 from pico2d import *
-from time import sleep
-import math
+
 
 import random
 import game_framework
 import title_state
 import game_over_state
 import clear_state
-
 
 name = "MainState"
 
@@ -16,6 +14,9 @@ class Back1:
     def __init__(self):
         if Back1.image == None:
             Back1.image = load_image('스테이지1.png')
+        self.bgm = load_music('게임진행.mp3')
+        self.bgm.set_volume(64)
+        self.bgm.repeat_play()
         self.back1_x = 450      #first background, 'x' location
 
     def update(self, frame_time):
@@ -118,9 +119,9 @@ class Trainer:
         self.collide = False
 
         if Trainer.trainer_image == None:
-            Trainer.trainer_image = load_image('이슬이.png')
+            Trainer.trainer_image = load_image('지우.png')
         if Trainer.trainer_attack_image == None:
-            Trainer.trainer_attack_image = load_image('이슬이.png')
+            Trainer.trainer_attack_image = load_image('지우.png')
         if Trainer.trainer_weapone_image == None:
             Trainer.trainer_weapone_image = load_image('몬스터볼무기.png')
 

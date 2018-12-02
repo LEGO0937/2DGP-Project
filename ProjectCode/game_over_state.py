@@ -10,8 +10,11 @@ logo_time = 0.0
 
 
 def enter():
-    global image
+    global image, bgm
     image = load_image('게임오버.png')
+    bgm = load_music('게임오버.mp3')
+    bgm.set_volume(64)
+    bgm.repeat_play()
 
 def exit():
     pass

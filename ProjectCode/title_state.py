@@ -7,9 +7,12 @@ name = "TitleState"
 image = None
 
 def enter():
-    global main_image, press_key, frame, real_frame
+    global main_image, press_key, frame, real_frame, bgm
     main_image = load_image('메인화면수정.png')
     press_key = load_image('press_any_button.png')
+    bgm = load_music('메인테마.mp3')
+    bgm.set_volume(64)
+    bgm.repeat_play()
     frame = 0
     real_frame = 0
 

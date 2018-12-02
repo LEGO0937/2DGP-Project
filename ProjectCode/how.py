@@ -8,8 +8,11 @@ name = "How"
 image = None
 
 def enter():
-    global image
+    global image, bgm
     image = load_image('조작법1.png')
+    bgm = load_music('메인다음조작법.mp3')
+    bgm.set_volume(64)
+    bgm.repeat_play()
 
 def exit():
     pass
